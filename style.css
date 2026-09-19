@@ -44,3 +44,9 @@ body{
     background-repeat: no-repeat;
 }
 
+.playerHP{
+    height:40px;
+    width: 200px;
+    border:1px solid black ;
+    background-color: red;
+}
