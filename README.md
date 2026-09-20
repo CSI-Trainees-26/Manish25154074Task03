@@ -2,7 +2,8 @@
 A simple 2D sword fighting game built using HTML, CSS, and JavaScript.
 
 🎮 About the Game
-In this game, the player can move, jump, run, and attack an enemy using keyboard controls. The game uses character animations and basic hit detection to create a simple fighting experience.
+In this game, the player can move, jump, run, and attack an enemy using keyboard controls.
+The game uses character animations and basic hit detection to create a simple fighting experience.
 
 🕹️ Controls
 A / ← Move Left
