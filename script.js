@@ -14,11 +14,12 @@ document.addEventListener("keydown",function(move){
     else if(move.key==="ArrowUp" || move.key==="w"){
         moveY+=200;
         player.style.bottom=`${moveY}px`;
+        moveX+=100;
     }
 });
 document.addEventListener("keyup",function(relese){
     moveY=0;
-    player.style.bottom=`${0}px`;
+    player.style.bottom=`${-10}px`;
 });
 
 var playerImg=document.querySelector(".player img");
@@ -54,8 +55,9 @@ document.addEventListener("keydown",function(attack){
             let enemyPos=enemy.offsetLeft;
             let distance=Math.abs(playerPos-enemyPos);
             if(distance<150){
+                damageEnemy();
                 let enemyImg=document.querySelector(".enemy img");
-
+                
                 enemyImg.src="assets/Enemy/Hit/Hit_01.png";
         setTimeout(function(){
             enemyImg.src="assets/Enemy/Hit/Hit_02.png";
@@ -175,6 +177,7 @@ document.addEventListener("keydown",function(walk){
 
 let enemyPos = 600;
 setInterval(function(){
+    if(paused || gameOver){ return; }
     let random = Math.random();
     if(random < 0.3){
         enemyPos -= 20;
@@ -224,6 +227,7 @@ function checkPlayerHit(){
     let distance=Math.abs(playerPos-enemyPos);
 
     if(distance<200){
+        damagePlayer();
             playerImg.src="assets/Player/Hit/Hit_01.png";
         setTimeout(function(){
             playerImg.src="assets/Player/Hit/Hit_02.png";
@@ -244,3 +248,104 @@ function checkPlayerHit(){
         },500);
     }
 }
+
+let paused=false;
+let pauseBtn=document.querySelector(".pause");
+ 
+document.addEventListener("keydown",function(block){
+    if(block.key==="p" || block.key==="Escape"){
+        if(!gameOver){
+            togglePause();
+        }
+        block.stopImmediatePropagation();
+        return;
+    }
+    if(paused || gameOver){
+        block.stopImmediatePropagation();
+    }
+},true);
+ 
+function togglePause(){
+    paused=!paused;
+    pauseBtn.textContent=paused ? "Play" : "Pause";
+}
+ 
+pauseBtn.addEventListener("click",togglePause);
+ 
+let score=0;
+let scoreBox=document.querySelector(".score");
+let enemyHits=0;
+let enemyHearts=document.querySelectorAll(".enemyHP .heart");
+ 
+function damageEnemy(){
+    if(gameOver){
+        return;
+    }
+    enemyHits++;
+    score+=10;
+    scoreBox.textContent="Score : "+score;
+    if(enemyHits%3===0){
+        enemyHearts[enemyHearts.length-enemyHits/3].classList.add("dead");
+    }
+    if(enemyHits===12){
+        endGame("YOU WIN");
+    }
+}
+ 
+let playerHits=0;
+let playerHearts=document.querySelectorAll(".playerHP .heart");
+ 
+function damagePlayer(){
+    if(gameOver){
+        return;
+    }
+    playerHits++;
+    score=Math.max(0,score-5);
+    scoreBox.textContent="Score : "+score;
+    if(playerHits%3===0){
+        playerHearts[playerHearts.length-playerHits/3].classList.add("dead");
+    }
+    if(playerHits===12){
+        endGame("YOU LOSS");
+    }
+}
+ 
+let gameOver=false;
+let resultBox=document.querySelector(".result");
+let resultText=document.querySelector(".resultText");
+let restartBtn=document.querySelector(".restart");
+ 
+function endGame(message){
+    gameOver=true;
+    resultText.textContent=message;
+    resultBox.classList.add("show");
+}
+ 
+restartBtn.addEventListener("click",function(){
+    location.reload();
+});
+ 
+function press(key){
+    document.body.dispatchEvent(new KeyboardEvent("keydown",{key:key,bubbles:true}));
+}
+ 
+function release(){
+    document.body.dispatchEvent(new KeyboardEvent("keyup",{key:"",bubbles:true}));
+}
+ 
+document.querySelector(".left").addEventListener("pointerdown",function(){
+    press("ArrowLeft");
+});
+ 
+document.querySelector(".right").addEventListener("pointerdown",function(){
+    press("ArrowRight");
+});
+ 
+document.querySelector(".jump").addEventListener("pointerdown",function(){
+    press("ArrowUp");
+});
+document.querySelector(".jump").addEventListener("pointerup",release);
+ 
+document.querySelector(".action").addEventListener("pointerdown",function(){
+    press(" ");
+});
